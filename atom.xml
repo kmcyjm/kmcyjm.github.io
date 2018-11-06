@@ -5,9 +5,9 @@
   
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://yoursite.com/"/>
+  <link href="https://blog.bbf.ninja/"/>
   <updated>2018-11-06T16:35:47.114Z</updated>
-  <id>http://yoursite.com/</id>
+  <id>https://blog.bbf.ninja/</id>
   
   <author>
     <name>John Doe</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>Hacking: The Art of Exploitation - Exploit_notesearch.c writeup</title>
-    <link href="http://yoursite.com/2018/11/06/Hacking-The-Art-of-Exploitation-Exploit-notesearch-c-writeup/"/>
-    <id>http://yoursite.com/2018/11/06/Hacking-The-Art-of-Exploitation-Exploit-notesearch-c-writeup/</id>
+    <link href="https://blog.bbf.ninja/2018/11/06/Hacking-The-Art-of-Exploitation-Exploit-notesearch-c-writeup/"/>
+    <id>https://blog.bbf.ninja/2018/11/06/Hacking-The-Art-of-Exploitation-Exploit-notesearch-c-writeup/</id>
     <published>2018-11-06T15:40:44.000Z</published>
     <updated>2018-11-06T16:35:47.114Z</updated>
     
@@ -36,22 +36,22 @@
     
     </summary>
     
-      <category term="cyber_security" scheme="http://yoursite.com/categories/cyber-security/"/>
+      <category term="cyber_security" scheme="https://blog.bbf.ninja/categories/cyber-security/"/>
     
-      <category term="binary_exploitation" scheme="http://yoursite.com/categories/cyber-security/binary-exploitation/"/>
+      <category term="binary_exploitation" scheme="https://blog.bbf.ninja/categories/cyber-security/binary-exploitation/"/>
     
-      <category term="stack_overflow" scheme="http://yoursite.com/categories/cyber-security/binary-exploitation/stack-overflow/"/>
+      <category term="stack_overflow" scheme="https://blog.bbf.ninja/categories/cyber-security/binary-exploitation/stack-overflow/"/>
     
     
-      <category term="binary_exploitation" scheme="http://yoursite.com/tags/binary-exploitation/"/>
+      <category term="binary_exploitation" scheme="https://blog.bbf.ninja/tags/binary-exploitation/"/>
     
-      <category term="hacking_the_art_of_exploitation" scheme="http://yoursite.com/tags/hacking-the-art-of-exploitation/"/>
+      <category term="hacking_the_art_of_exploitation" scheme="https://blog.bbf.ninja/tags/hacking-the-art-of-exploitation/"/>
     
-      <category term="c" scheme="http://yoursite.com/tags/c/"/>
+      <category term="c" scheme="https://blog.bbf.ninja/tags/c/"/>
     
-      <category term="expoit" scheme="http://yoursite.com/tags/expoit/"/>
+      <category term="expoit" scheme="https://blog.bbf.ninja/tags/expoit/"/>
     
-      <category term="buffer_overflow" scheme="http://yoursite.com/tags/buffer-overflow/"/>
+      <category term="buffer_overflow" scheme="https://blog.bbf.ninja/tags/buffer-overflow/"/>
     
   </entry>
   
