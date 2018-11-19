@@ -110,6 +110,65 @@
       
       
   
+    <h1 class="title"><a href="/2018/11/19/Hacking-The-Art-of-Exploitation-Overflowing-Function-Pointers-writeup/">Hacking: The Art of Exploitation Overflowing Function Pointers writeup</a></h1>
+  
+
+      <time datetime="2018-11-19T21:54:33.000Z"><a href="/2018/11/19/Hacking-The-Art-of-Exploitation-Overflowing-Function-Pointers-writeup/">2018-11-19</a></time>
+      
+  </header>
+    <div class="entry">
+      
+        <p>The key to successfully exploit this program is to:</p>
+<ul>
+<li><p>play the game once.</p>
+</li>
+<li><p>select the same game the second time when you are prompted to play a game.</p>
+</li>
+</ul>
+<p>This will make the choice equal to last_game, and execution will jump right to play_the_game().</p>
+<p>In play_the_game() function, the player.current_game() (<em>note the parentheses at the end</em>) will run,  which is to execute the function<br>which current_game is pointing to), which is the jackpot function.</p>
+
+	 
+	     <p style="margin:20px 0; color:#9f9f9f; font-size:12px;">
+<span>Posted by <a style="color:#9f9f9f;" href=""><strong></strong></a> - 2018-11-19</span><br>
+<span style="line-height:13px;">如需转载，请注明： 本文来自 <a style="color:#9f9f9f;" href="https://blog.bbf.ninja"><strong>Hexo</strong></a></span>
+</p>
+       	 
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  
+<article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+  <header>
+      
+      
+  
     <h1 class="title"><a href="/2018/11/06/Hacking-The-Art-of-Exploitation-Exploit-notesearch-c-writeup/">Hacking: The Art of Exploitation - Exploit_notesearch.c writeup</a></h1>
   
 
@@ -118,8 +177,12 @@
   </header>
     <div class="entry">
       
-        <p>此时假定的是notesearch的stack会位于exploit_notesearch的上方。我们需要覆盖notesearch中main函数的返回地址。</p>
-<p>offset用来以i为中心寻找合适的偏移地址以到达NOP或者exploit code。</p>
+        <p>What the exploit_notesearch.c does, is to allocate an area of memory pointed to by buffer, to have the exploitable command stored there.</p>
+<p>Note, it only constructs the exploit command, not use<br>The first question you might ask after going throught the source code is probably be,</p>
+<blockquote>
+<p>How is the offset 270 determined?</p>
+</blockquote>
+<p>This is based on the assumption that the stack of the <code>notesearch</code> program is right on top of the <code>exploit_notesearch</code> program who invokes it. This is why the varialbe <code>i</code> is used as a reference point to reach to the exploit code exists in the <code>notesearch</code> stack.</p>
 <p>exploit_notesearch只是用来构建一个这样的命令.</p>
 <p>为什么在system(command)执行完成后再来看ret addr处的数据就看不到NOP或者exploit code了呢？<br>有可能是因为在notesearch执行完返回system()之后stack上的数据已经被破坏了.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/16xw searchstring</span><br><span class="line">0xbffff720:     0x90909090      0x90909090      0x90909090      0x90909090</span><br><span class="line">0xbffff730:     0x90909090      0x90909090      0x90909090      0x90909090</span><br><span class="line">0xbffff740:     0x90909090      0x90909090      0x90909090      0x90909090</span><br><span class="line">0xbffff750:     0x90909090      0x90909090      0x90909090      0xdb31c031</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line"></span><br><span class="line">Program exited normally.</span><br></pre></td></tr></table></figure>
