@@ -122,9 +122,18 @@
 <p><code>perl -e &#39;print &quot;1\n5\nn\n5\n&quot; . &quot;A&quot;x100 . &quot;\x70\x8d\x04\x08\n&quot; . &quot;1\n&quot; . &quot;y\n&quot;x10 . &quot;n\n5\nJon Erickson\n7\n&quot;&#39; |
 ./game_of_chance</code></p>
 <p>The key for this exploit to work is to:</p>
-<p><em>play the same game after changing your user name.</em></p>
-<p>Changing the user name after playing the first time is to overwrite the function poitner <code>current_game</code>, to make it pointng to<br>the jackpot() function.</p>
-<p>Playing the same game after changing the user name is vital. This skips following logic in <code>game_of_chance</code>, and jump<br>right to the execution of <code>play_the_game()</code> following below code snippet. When <code>if(player.current_game() != -1)</code><br>gets executed, it will jump to location <code>&quot;\x70\x8d\x04\x08\n&quot;</code>, which is where the <code>jackpot()</code> function is<br>located.</p>
+<p><strong>play the same game after changing your user name.</strong></p>
+<p>The exploitation is divided into two phases,</p>
+<ol>
+<li>The first phase is to select a game to play, and change your user name right after.</li>
+</ol>
+<p>The game can be either game 1 or 2 or 3. This sets the <code>last_game</code> which will be compared to the <code>chocie</code> in phase 2.</p>
+<p>They need to be equal to allow the exploitation to work.</p>
+<p>Changing the user name is to overwrite the function poitner <code>current_game</code> with the address of the <code>jackpot()</code> function.</p>
+<ol>
+<li>In the second phase, when the same game is played, the following code snippet will be skipped, because <code>choice</code> is<br>intentionally made to equal to <code>last_game</code>.</li>
+</ol>
+<p>This makes the execution proceeds to <code>play_the_game</code>. And when <code>player.current_game()</code> is reached, the exeuction will jump to location <code>&quot;\x70\x8d\x04\x08\n&quot;</code>, which is where the <code>jackpot()</code> function is located.</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(choice != last_game) &#123; <span class="comment">// If the function ptr isn't set</span></span><br><span class="line">               <span class="keyword">if</span>(choice == <span class="number">1</span>)        <span class="comment">// then point it at the selected game</span></span><br><span class="line">                  player.current_game = pick_a_number;</span><br><span class="line">               <span class="keyword">else</span> <span class="keyword">if</span>(choice == <span class="number">2</span>)</span><br><span class="line">                  player.current_game = dealer_no_match;</span><br><span class="line">               <span class="keyword">else</span></span><br><span class="line">                  player.current_game = find_the_ace;</span><br><span class="line">               last_game = choice;   <span class="comment">// and set last_game.</span></span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
 
 	 
