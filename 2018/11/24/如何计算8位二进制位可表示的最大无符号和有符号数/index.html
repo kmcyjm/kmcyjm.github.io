@@ -3,14 +3,19 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
-  <title>Hacking: The Art of Exploitation - Overflowing Function Pointers writeup | Hexo</title>
+  <title>如何计算8位二进制位可表示的最大无符号和有符号数 | Hexo</title>
   <meta name="author" content="John Doe">
   
-  <meta name="description" content="The exploit buffer to overflow the function pointer is as follows,
-$ perl -e &amp;#39;print &amp;quot;1\n5\nn\n5\n&amp;quot; . &amp;quot;A&amp;quot;x100 . &amp;quot;\x70\x8d\">
+  <meta name="description" content="一个8位的二进制位可表示的最大和最小的无符号数为：
+11111111 - 25500000000 - 0
+那么最大跟最小的有符号数呢？
+在不查询Google的情况下，我们来看下怎么算。
+在谈论有符号数的背景下，首先看如何判断一个二进制数是正还是负数？
+答案是根据最左边的数字来判断的。
+1为负，0为正">
   
   
-  <meta property="og:title" content="Hacking: The Art of Exploitation - Overflowing Function Pointers writeup">
+  <meta property="og:title" content="如何计算8位二进制位可表示的最大无符号和有符号数">
   <meta property="og:site_name" content="Hexo">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -116,34 +121,61 @@ $ perl -e &amp;#39;print &amp;quot;1\n5\nn\n5\n&amp;quot; . &amp;quot;A&amp;quot
       
       
   
-    <h1 class="title">Hacking: The Art of Exploitation - Overflowing Function Pointers writeup</h1>
+    <h1 class="title">如何计算8位二进制位可表示的最大无符号和有符号数</h1>
   
 
-      <time datetime="2018-11-19T21:54:33.000Z"><a href="/2018/11/19/Hacking-The-Art-of-Exploitation-Overflowing-Function-Pointers-writeup/">2018-11-19</a></time>
+      <time datetime="2018-11-24T23:30:46.000Z"><a href="/2018/11/24/如何计算8位二进制位可表示的最大无符号和有符号数/">2018-11-24</a></time>
       
   </header>
     <div class="entry">
       
-        <p>The exploit buffer to overflow the function pointer is as follows,</p>
-<p><code>$ perl -e &#39;print &quot;1\n5\nn\n5\n&quot; . &quot;A&quot;x100 . &quot;\x70\x8d\x04\x08\n&quot; . &quot;1\n&quot; . &quot;y\n&quot;x10 . &quot;n\n5\nJon Erickson\n7\n&quot;&#39; |
-./game_of_chance</code></p>
-<p>The key for this exploit to work is to - <strong>play the same game after changing your user name.</strong></p>
-<p>The exploitation is divided into two phases,</p>
-<ol>
-<li>The first phase is to select a game to play, and change your user name right after.</li>
-</ol>
-<p>The game can be either game 1 or 2 or 3. This sets the <code>last_game</code> which will be compared to the <code>chocie</code> in phase 2.</p>
-<p>They need to be equal to allow the exploitation to work.</p>
-<p>Changing the user name is to overwrite the function poitner <code>current_game</code> with the address of the <code>jackpot()</code> function.</p>
-<ol start="2">
-<li>In the second phase, when the same game is played, the following code snippet will be skipped, because <code>choice</code> is intentionally made to equal to <code>last_game</code>.</li>
-</ol>
-<p>This makes the execution proceeds to <code>play_the_game</code>. And when <code>player.current_game()</code> is reached, the exeuction will jump to location <code>&quot;\x70\x8d\x04\x08\n&quot;</code>, which is where the <code>jackpot()</code> function is located.</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(choice != last_game) &#123; <span class="comment">// If the function ptr isn't set</span></span><br><span class="line">               <span class="keyword">if</span>(choice == <span class="number">1</span>)        <span class="comment">// then point it at the selected game</span></span><br><span class="line">                  player.current_game = pick_a_number;</span><br><span class="line">               <span class="keyword">else</span> <span class="keyword">if</span>(choice == <span class="number">2</span>)</span><br><span class="line">                  player.current_game = dealer_no_match;</span><br><span class="line">               <span class="keyword">else</span></span><br><span class="line">                  player.current_game = find_the_ace;</span><br><span class="line">               last_game = choice;   <span class="comment">// and set last_game.</span></span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+        <p>一个8位的二进制位可表示的最大和最小的无符号数为：</p>
+<p>11111111 - 255<br>00000000 - 0</p>
+<p>那么最大跟最小的有符号数呢？</p>
+<p>在不查询Google的情况下，我们来看下怎么算。</p>
+<p>在谈论有符号数的背景下，首先看如何判断一个二进制数是正还是负数？</p>
+<p>答案是根据最左边的数字来判断的。</p>
+<p>1为负，0为正</p>
+<p>所以11111111是一个负数，00000000是一个正数。</p>
+<p>那么11111111在负数中处于一个什么位置呢，它是8位二进制位中可表示的最大负数吗？还是最小的？还是都不是？</p>
+<p>我们将其表示为十进制数来比较会比较直观。</p>
+<p>那么它表示的十进制数是什么？</p>
+<p>我们先反过来看，怎么将一个十进制的负数表示成一个二进制数。</p>
+<p>以-10为例。先将十进制的负数取绝对数，结果为10.</p>
+<pre><code>1. 将其绝对值表示为二进制。结果为1010。
+
+2. 将以上结果取反。结果为0101.
+
+3. 再在其基础上加1. 结果为0110，这就是-10在计算机中的存储形式。
+</code></pre><p>现在回到原来的话题，11111111表示的是一个什么十进制的负数？</p>
+<p>这其实是对刚刚第一个例子的一个反向操作。</p>
+<pre><code>1. 先将11111111减1，得到11111110.
+
+2. 接着取反。得到00000001。
+
+3. 将其转化为十进制数 - 结果为1。
+
+4. 最后为其加上负号，最终结论就是其表示是一个十进制的-1
+</code></pre><p>那么8个二进制位可表示的最大正数和最小负数是多少？（换句话说就是最大跟最小的数）</p>
+<p>既然在有符号数里11111111表示是十进制的-1，那么如果我们自然而然的想到将其减1是否就是十进制的-2？对滴！</p>
+<p>那么可以表示的最小有符号数是多少呢？</p>
+<p>使用以上逻辑，那么我们一直减下去不就可以得到最小的负数值了吗？当然可以。但问题是减到什么时候为止呢？</p>
+<p>在保持最左边的1不动的情况下（为什么？）首先我可以想到减到10000000应该是最小了。那么这是个什么十进制的负数呢？答案是-128.</p>
+<p>那有没有可能表示到-129？ 按照-129比-128小1的逻辑，我们来验证下。</p>
+<p>10000000 - 1 = 00000001</p>
+<p>这就不对了，一个负数减一反倒成了一个正数。</p>
+<p>所以我们可以推断-128就是8位二进制位可表示的最小有符号数值。</p>
+<p>那么可以表示的最大有符号数是多少呢？</p>
+<p>最大数肯定是个正数，所以最左边肯定是0. 一个合理的猜测就是01111111.</p>
+<p>这是十进制的127.</p>
+<p>表示到128有没有可能？ 算一下就知。</p>
+<p>01111111 + 1 = 10000000</p>
+<p>一个正数加1结果变成了一个负数，肯定不行。</p>
+<p>所以结论就是8位二进制位可表示的最大有符号十进制数为+127。</p>
 
 	 
 	     <p style="margin:20px 0; color:#9f9f9f; font-size:12px;">
-<span>Posted by <a style="color:#9f9f9f;" href><strong></strong></a> - 2018-11-19</span><br>
+<span>Posted by <a style="color:#9f9f9f;" href><strong></strong></a> - 2018-11-24</span><br>
 <span style="line-height:13px;">如需转载，请注明： 本文来自 <a style="color:#9f9f9f;" href="https://blog.bbf.ninja"><strong>Hexo</strong></a></span>
 </p>
        	 
@@ -153,10 +185,15 @@ $ perl -e &amp;#39;print &amp;quot;1\n5\nn\n5\n&amp;quot; . &amp;quot;A&amp;quot
       
 	 
      		  
+  
+  <div class="categories">
+    <a href="/categories/fundementals/">fundementals</a>
+  </div>
+
        		
   
   <div class="tags">
-    <a href="/tags/binary-exploitation/">binary_exploitation</a>, <a href="/tags/hacking-the-art-of-exploitation/">hacking_the_art_of_exploitation</a>, <a href="/tags/c/">c</a>, <a href="/tags/expoit/">expoit</a>, <a href="/tags/buffer-overflow/">buffer_overflow</a>
+    <a href="/tags/binary/">binary</a>, <a href="/tags/assembly/">assembly</a>
   </div>
 
      		  
