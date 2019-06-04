@@ -10,8 +10,7 @@
 
 hackme: Deconstructing an ELF File
 
-BIG THANKS TO THE AUTHOR!
-There are a">
+There are a couple of reasons behind ">
   
   
   <meta property="og:title" content="deconstructing-an-elf-file">
@@ -132,10 +131,9 @@ There are a">
 <blockquote>
 <p><a href="http://manoharvanga.com/hackme/" target="_blank" rel="noopener">hackme: Deconstructing an ELF File</a></p>
 </blockquote>
-<p><strong>BIG THANKS TO THE AUTHOR!</strong></p>
 <p>There are a couple of reasons behind this,</p>
 <ul>
-<li>This is by far the most difficult ELF32 binary I’ve analysed, primarily because the symbols are stripped, making commands like <code>diassemble main</code> in gdb etc impossible. </li>
+<li>This is by far the most difficult ELF32 binary I’ve analysed, primarily because the symbols are stripped, making commands like <code>diassemble main</code> in gdb impossible. </li>
 <li>The funcitons name referenced in the share library are shwon as <code>ds:0xnnnnnnn</code>, which involves some work to guess who is who.</li>
 <li>The original article does not show the correct password (however, works with some alternatives) in the first place, which will be worked out in this write-up.</li>
 </ul>
@@ -143,6 +141,7 @@ There are a">
 <p>If you would like to give the binary a try, feel free to download it from the original webiste above.</p>
 <p>In this write-up, I will give more words on analysing the logic of the binary pertaining to revealing the password.</p>
 <p>Let’s get started!</p>
+<p><strong>(BIG THANKS TO THE AUTHOR! BTW)</strong></p>
 <h2 id="The-Start"><a href="#The-Start" class="headerlink" title="The Start"></a>The Start</h2><p>Since the program has anit-debugger built-in, we need to preload a fake ptrace() function from our custom library to get around it, the steps are well-documented there, which won’t repeat there.</p>
 <p>One thing I’d like to add though, is if we need to load it up in gdb for dynamic analysis, we can use the following command to set the <code>LD_PRELOAD</code> environment variable.</p>
 <p><code>gdb-peda$ set environment LD_PRELOAD=./fake.so</code></p>
