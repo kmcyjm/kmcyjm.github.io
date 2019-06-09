@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://blog.bbf.ninja/2019/06/06/A-Guide-to-hexdump/</loc>
+    
+    <lastmod>2019-06-09T11:51:23.526Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.bbf.ninja/2019/06/04/facebook-ctf-2019/</loc>
+    
+    <lastmod>2019-06-06T21:25:41.836Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://blog.bbf.ninja/2019/06/03/deconstructing-an-elf-file/</loc>
     
     <lastmod>2019-06-04T21:41:09.734Z</lastmod>
