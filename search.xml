@@ -24,29 +24,6 @@
     </entry>
     
     <entry>
-      <title>facebook-ctf-2019</title>
-      <link href="/2019/06/04/facebook-ctf-2019/"/>
-      <url>/2019/06/04/facebook-ctf-2019/</url>
-      
-        <content type="html"><![CDATA[<p>In the past two days I spent some time on the Facebook CTF 2019.</p><p>This is the first CTF held by Facebook, and I would like to see what level it would be.</p><p>Right after I jump to its challenges page when the game opens, I realized that the challenges aren’t as trivial as the ones I’ve done in, e.g. picoCTF, or not even as easy to get started when I am doing Google CTFs.</p><p>It only has 2 - 3 challenge under each category, though more are released as the game goes on. It doesn’t have a beginner’s guide, and most of the challenges’s score are on the same level, which is indication saying “hey nerd, IT’S GONNA BE TOUGH!”</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> ctf </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> ctf </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>deconstructing-an-elf-file</title>
       <link href="/2019/06/03/deconstructing-an-elf-file/"/>
       <url>/2019/06/03/deconstructing-an-elf-file/</url>
