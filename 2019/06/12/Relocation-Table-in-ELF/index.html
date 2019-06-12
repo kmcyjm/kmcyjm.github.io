@@ -1,0 +1,210 @@
+<!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>Relocation Table in ELF | Hexo</title>
+  <meta name="author" content="Jiaming">
+  
+  <meta name="description" content="Have you ever wondered how Type and Sym. Name gets calculated in the Relocation Table?
+Using the classic helloworld.c program as an example again,
+123">
+  
+  
+  <meta property="og:title" content="Relocation Table in ELF">
+  <meta property="og:site_name" content="Hexo">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta property="og:image" content>
+  
+   <link rel="apple-touch-icon" href="/icon.png">
+   <link rel="shortcut icon" href="/favicon.png">
+   <link rel="alternate" href="http://xxx.xx/atom.xml" title="Hexo" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+</head>
+</html>
+
+<body>
+  <div id="content" class="inner">
+    <aside id="sidebar" class="alignleft">
+      <div class="navigationBar">
+        <a href="/">Hexo</a>
+      </div>
+    	
+  <nav class="widget" id="menu">
+	<ul>
+    
+      <li class="cell"><a class="next" href="/">Home</a></li><li>
+    
+      </li><li class="cell"><a class="next" href="/archives/">Archives</a></li><li>
+    
+      </li><li class="cell"><a class="next" href="/about/">About</a></li><li>
+    
+      </li><li class="cell"><a class="next" href="/atom.xml">Subscribe</a></li><li>
+    
+    </li></ul>
+</nav>
+
+  <div class="widget weibo">
+<iframe width="100%" height="100" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=110&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=0&isWeibo=0&isFans=0&uid=&verifier=78e1ee4d&colors=ffffff,ffffff,999,000,ecfbfd&dpc=1"></iframe>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">Categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/cyber-security/binary-exploitation/">binary_exploitation</a><small>1</small></li>
+  
+    <li><a href="/categories/ctf/">ctf</a><small>1</small></li>
+  
+    <li><a href="/categories/cyber-security/">cyber_security</a><small>2</small></li>
+  
+    <li><a href="/categories/fundementals/">fundementals</a><small>1</small></li>
+  
+    <li><a href="/categories/cyber-security/reverse-engineering/">reverse_engineering</a><small>1</small></li>
+  
+    <li><a href="/categories/cyber-security/binary-exploitation/stack-overflow/">stack_overflow</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">Tags</h3>
+  <div class="entry">
+    <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/Relocation-Table/" style="font-size: 10px;">Relocation Table</a> <a href="/tags/assembly/" style="font-size: 10px;">assembly</a> <a href="/tags/binary/" style="font-size: 10px;">binary</a> <a href="/tags/binary-exploitation/" style="font-size: 15px;">binary_exploitation</a> <a href="/tags/buffer-overflow/" style="font-size: 15px;">buffer_overflow</a> <a href="/tags/c/" style="font-size: 20px;">c</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/elf/" style="font-size: 10px;">elf</a> <a href="/tags/expoit/" style="font-size: 15px;">expoit</a> <a href="/tags/hacking-the-art-of-exploitation/" style="font-size: 15px;">hacking_the_art_of_exploitation</a> <a href="/tags/hexdump/" style="font-size: 10px;">hexdump</a> <a href="/tags/reverse-engineering/" style="font-size: 15px;">reverse engineering</a>
+  </div>
+</div>
+
+
+    	<footer id="footer" class="inner"><div class="copyright">
+  
+  &copy; 2019 Jiaming
+  
+</div>
+
+
+
+</footer>
+    </aside>
+    
+    
+    <div id="hidden-navigationBar" class="navigationBar">
+      <a href="/">Hexo</a>
+    </div>
+    <div id="main-col" class="alignright">
+    <div id="wrapper">
+      
+<article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src>
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+  <header>
+      
+      
+  
+    <h1 class="title">Relocation Table in ELF</h1>
+  
+
+      <time datetime="2019-06-12T15:43:59.000Z"><a href="/2019/06/12/Relocation-Table-in-ELF/">2019-06-12</a></time>
+      
+  </header>
+    <div class="entry">
+      
+        <p><strong><em>Have you ever wondered how <code>Type</code> and <code>Sym. Name</code> gets calculated in the Relocation Table</em>?</strong></p>
+<p>Using the classic <code>helloworld.c</code> program as an example again,</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Hello world!\n"</span>);</span><br><span class="line">    getchar();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>$ gcc -o helloworld helloworld.c</code></p>
+<p>Let’s print out its relocation table.</p>
+<p><code>$ readelf -r helloworld</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Relocation section &apos;.rela.dyn&apos; at offset 0x410 contains 8 entries:</span><br><span class="line">  Offset          Info           Type           Sym. Value    Sym. Name + Addend</span><br><span class="line">000000200db8  000000000008 R_X86_64_RELATIVE                    630</span><br><span class="line">000000200dc0  000000000008 R_X86_64_RELATIVE                    5f0</span><br><span class="line">000000201008  000000000008 R_X86_64_RELATIVE                    201008</span><br><span class="line">000000200fd8  000100000006 R_X86_64_GLOB_DAT 0000000000000000 _ITM_deregisterTMClone + 0</span><br><span class="line">000000200fe0  000300000006 R_X86_64_GLOB_DAT 0000000000000000 __libc_start_main@GLIBC_2.2.5 + 0</span><br><span class="line">000000200fe8  000400000006 R_X86_64_GLOB_DAT 0000000000000000 __gmon_start__ + 0</span><br><span class="line">000000200ff0  000500000006 R_X86_64_GLOB_DAT 0000000000000000 _ITM_registerTMCloneTa + 0</span><br><span class="line">000000200ff8  000600000006 R_X86_64_GLOB_DAT 0000000000000000 __cxa_finalize@GLIBC_2.2.5 + 0</span><br><span class="line"></span><br><span class="line">Relocation section &apos;.rela.plt&apos; at offset 0x4d0 contains 1 entry:</span><br><span class="line">  Offset          Info           Type           Sym. Value    Sym. Name + Addend</span><br><span class="line">000000200fd0  000200000007 R_X86_64_JUMP_SLO 0000000000000000 puts@GLIBC_2.2.5 + 0</span><br></pre></td></tr></table></figure>
+<p>Looking at the <a href="http://man7.org/linux/man-pages/man5/elf.5.html" target="_blank" rel="noopener">struct</a> for the Relocation entry, <code>Type</code> and <code>Sym. value</code>/<code>Sym. Name</code> aren’t amongst its attributes.</p>
+<p>However, the man page for elf left a hint as to where we can find them,</p>
+<blockquote>
+<p>When the text refers to a relocation entry’s relocation type or symbol table index, it means the result of applying <code>ELF[32|64]_R_TYPE</code> or <code>ELF[32|64]_R_SYM</code>, respectively, to the entry’s <code>r_info</code> member.</p>
+</blockquote>
+<p><strong><em>What does it mean exactly?</em></strong></p>
+<p>So basically <code>ELF[32|64]_R_TYPE</code> and <code>ELF[32|64]_R_SYM</code> are defined as macros, which take <code>r_info</code> as a parameter, and the result from each marco is the <code>Type</code> and <code>Sym. Name</code> respectively.</p>
+<p>Below are the definition of both macros, we will pick the 64-bit version since this <code>helloworld</code> program is in 64-bit.</p>
+<p><strong><em>elf.h</em></strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF64_R_SYM(i)			((i) &gt;&gt; 32)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF64_R_TYPE(i)			((i) &amp; 0xffffffff)</span></span><br></pre></td></tr></table></figure>
+<p>Take the reloation entry for <code>puts</code> for example, put <code>000200000007</code> in place of <code>i</code> in <code>((i) &gt;&gt; 32)</code>, the result is <code>2</code>. This is an index into the symbol table below. <code>puts</code> right sitting at the second index there, and its value can be retrieved as well in one go.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">readelf -s helloworld</span><br><span class="line"></span><br><span class="line">Symbol table &apos;.dynsym&apos; contains 7 entries:</span><br><span class="line">   Num:    Value          Size Type    Bind   Vis      Ndx Name</span><br><span class="line">     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND</span><br><span class="line">     1: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_deregisterTMCloneTab</span><br><span class="line">     2: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND puts@GLIBC_2.2.5 (2)</span><br><span class="line">     3: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND __libc_start_main@GLIBC_2.2.5 (2)</span><br><span class="line">     4: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND __gmon_start__</span><br><span class="line">     5: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_registerTMCloneTable</span><br><span class="line">     6: 0000000000000000     0 FUNC    WEAK   DEFAULT  UND __cxa_finalize@GLIBC_2.2.5 (2)</span><br></pre></td></tr></table></figure>
+<p>Next, the <code>Type</code>.</p>
+<p>Put <code>000200000007</code> in place of <code>i</code> in the second macro <code>((i) &amp; 0xffffffff)</code>, the result is <code>7</code>.</p>
+<p>Look up this number in the following table, the type is <code>R_X86_64_JUMP_SLOT</code>.</p>
+<p><strong><em>elf.h</em></strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* AMD x86-64 relocations.  */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_NONE		0	<span class="comment">/* No reloc */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_64		1	<span class="comment">/* Direct 64 bit  */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_PC32		2	<span class="comment">/* PC relative 32 bit signed */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOT32		3	<span class="comment">/* 32 bit GOT entry */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_PLT32		4	<span class="comment">/* 32 bit PLT address */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_COPY		5	<span class="comment">/* Copy symbol at runtime */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GLOB_DAT	6	<span class="comment">/* Create GOT entry */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_JUMP_SLOT	7	<span class="comment">/* Create PLT entry */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_RELATIVE	8	<span class="comment">/* Adjust by program base */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOTPCREL	9	<span class="comment">/* 32 bit signed PC relative</span></span></span><br></pre></td></tr></table></figure>
+<p>Hope you enjoyed.</p>
+<blockquote>
+<p><strong><em>What is a symbol?</em></strong>  </p>
+<p>A symbol is a name assigned to an entity is your code.<br>A variable name is a symbol, a function name is a symbol, it is basically a tag to a thing.</p>
+<p><strong><em>What is a Relocation Table?</em></strong>  </p>
+<p>A Relocation Table is a table that tells a linker which location in the code needs to be patched with the symbol’s real memory address. So in the final machine code, when the CPU needs to access the value of a symbol, it just go to that memory address. This is the only thing it cares about.</p>
+<p>Put it in the real world, it is not possible to find Sam Smith’s home by just saying <em>“Sending this letter to Sam’s house”</em>. The address has to be physical.  </p>
+<p>Same story for programming. You got the point.</p>
+</blockquote>
+
+	 
+	     <p style="margin:20px 0; color:#9f9f9f; font-size:12px;">
+<span>Posted by <a style="color:#9f9f9f;" href><strong></strong></a> - 2019-06-12</span><br>
+<br>
+<span style="line-height:13px;">Jiaming's original content</span>
+</p>
+
+       	 
+      
+    </div>
+    <footer>
+      
+	 
+     		  
+       		
+  
+  <div class="tags">
+    <a href="/tags/ELF/">ELF</a>, <a href="/tags/Relocation-Table/">Relocation Table</a>
+  </div>
+
+     		  
+       	 
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+</div>
+    </div>
+    <div class="tabbar" onload="divideTabBar()">
+	
+      <div class="tabbaritem"><a class="next" href="/">Home</a></div>
+    
+      <div class="tabbaritem"><a class="next" href="/archives/">Archives</a></div>
+    
+      <div class="tabbaritem"><a class="next" href="/about/">About</a></div>
+    
+      <div class="tabbaritem"><a class="next" href="/atom.xml">Subscribe</a></div>
+    
+</div>
+
+
+  </div>
+</body>
+</html>

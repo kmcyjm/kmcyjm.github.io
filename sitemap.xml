@@ -4,14 +4,28 @@
   <url>
     <loc>https://blog.bbf.ninja/2019/06/03/deconstructing-an-elf-file/</loc>
     
-    <lastmod>2019-06-11T22:19:18.833Z</lastmod>
+    <lastmod>2019-06-12T15:53:44.479Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://blog.bbf.ninja/2019/06/06/A-Guide-to-hexdump/</loc>
     
-    <lastmod>2019-06-11T22:06:16.888Z</lastmod>
+    <lastmod>2019-06-12T15:47:44.624Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/</loc>
+    
+    <lastmod>2019-06-12T15:46:44.269Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.bbf.ninja/2019/06/04/Facebook-CTF-2019/</loc>
+    
+    <lastmod>2019-06-12T15:46:14.296Z</lastmod>
     
   </url>
   
