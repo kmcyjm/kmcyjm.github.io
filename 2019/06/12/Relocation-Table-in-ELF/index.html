@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Have you ever wondered how Type and Sym. Name get calculated in the Relocation Table? Using the classic helloworld.c program as an example again, 123456#include &amp;lt;stdio.h&amp;gt;int main() &amp;#123;    pri">
+<meta name="keywords" content="ELF,Relocation Table">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Relocation Table in ELF">
+<meta property="og:url" content="https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Have you ever wondered how Type and Sym. Name get calculated in the Relocation Table? Using the classic helloworld.c program as an example again, 123456#include &amp;lt;stdio.h&amp;gt;int main() &amp;#123;    pri">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-06-30T10:32:34.523Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Relocation Table in ELF">
+<meta name="twitter:description" content="Have you ever wondered how Type and Sym. Name get calculated in the Relocation Table? Using the classic helloworld.c program as an example again, 123456#include &amp;lt;stdio.h&amp;gt;int main() &amp;#123;    pri">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Relocation Table in ELF</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/06/19/Dissecting-zip-module-in-Python/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/06/06/A-Guide-to-hexdump/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&text=Relocation Table in ELF"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&title=Relocation Table in ELF"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&is_video=false&description=Relocation Table in ELF"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Relocation Table in ELF&body=Check out this article: https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&title=Relocation Table in ELF"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&title=Relocation Table in ELF"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&title=Relocation Table in ELF"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&title=Relocation Table in ELF"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&name=Relocation Table in ELF&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Relocation Table in ELF
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Hexo</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-06-12T15:43:59.000Z" itemprop="datePublished">2019-06-12</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/ELF/">ELF</a>, <a class="tag-link" href="/tags/Relocation-Table/">Relocation Table</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><strong><em>Have you ever wondered how <code>Type</code> and <code>Sym. Name</code> get calculated in the Relocation Table</em>?</strong></p>
+<p>Using the classic <code>helloworld.c</code> program as an example again,</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Hello world!\n"</span>);</span><br><span class="line">    getchar();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>$ gcc -o helloworld helloworld.c</code></p>
+<p>Let’s print out its relocation table.</p>
+<p><code>$ readelf -r helloworld</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Relocation section &apos;.rela.dyn&apos; at offset 0x410 contains 8 entries:</span><br><span class="line">  Offset          Info           Type           Sym. Value    Sym. Name + Addend</span><br><span class="line">000000200db8  000000000008 R_X86_64_RELATIVE                    630</span><br><span class="line">000000200dc0  000000000008 R_X86_64_RELATIVE                    5f0</span><br><span class="line">000000201008  000000000008 R_X86_64_RELATIVE                    201008</span><br><span class="line">000000200fd8  000100000006 R_X86_64_GLOB_DAT 0000000000000000 _ITM_deregisterTMClone + 0</span><br><span class="line">000000200fe0  000300000006 R_X86_64_GLOB_DAT 0000000000000000 __libc_start_main@GLIBC_2.2.5 + 0</span><br><span class="line">000000200fe8  000400000006 R_X86_64_GLOB_DAT 0000000000000000 __gmon_start__ + 0</span><br><span class="line">000000200ff0  000500000006 R_X86_64_GLOB_DAT 0000000000000000 _ITM_registerTMCloneTa + 0</span><br><span class="line">000000200ff8  000600000006 R_X86_64_GLOB_DAT 0000000000000000 __cxa_finalize@GLIBC_2.2.5 + 0</span><br><span class="line"></span><br><span class="line">Relocation section &apos;.rela.plt&apos; at offset 0x4d0 contains 1 entry:</span><br><span class="line">  Offset          Info           Type           Sym. Value    Sym. Name + Addend</span><br><span class="line">000000200fd0  000200000007 R_X86_64_JUMP_SLO 0000000000000000 puts@GLIBC_2.2.5 + 0</span><br></pre></td></tr></table></figure>
+<p>Looking at the <a href="http://man7.org/linux/man-pages/man5/elf.5.html" target="_blank" rel="noopener">struct</a> for the Relocation entry, <code>Type</code> and <code>Sym. value</code>/<code>Sym. Name</code> aren’t amongst its attributes.</p>
+<p>However, the man page for elf left a hint as to where we can find them,</p>
+<blockquote>
+<p>When the text refers to a relocation entry’s relocation type or symbol table index, it means the result of applying <code>ELF[32|64]_R_TYPE</code> or <code>ELF[32|64]_R_SYM</code>, respectively, to the entry’s <code>r_info</code> member.</p>
+</blockquote>
+<p><strong><em>What does it mean exactly?</em></strong></p>
+<p>So basically <code>ELF[32|64]_R_TYPE</code> and <code>ELF[32|64]_R_SYM</code> are defined as macros, which take <code>r_info</code> as a parameter, and the result from each marco is the <code>Type</code> and <code>Sym. Name</code> respectively.</p>
+<p>Below are the definition of both macros, we will pick the 64-bit version since this <code>helloworld</code> program is in 64-bit.</p>
+<p><strong><em>elf.h</em></strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF64_R_SYM(i)			((i) &gt;&gt; 32)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF64_R_TYPE(i)			((i) &amp; 0xffffffff)</span></span><br></pre></td></tr></table></figure>
+<p>Take the reloation entry for <code>puts</code> for example, put <code>000200000007</code> in place of <code>i</code> in <code>((i) &gt;&gt; 32)</code>, the result is <code>2</code>. This is an index into the symbol table below. <code>puts</code> right sitting at the second index there, and its value can be retrieved as well in one go.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">readelf -s helloworld</span><br><span class="line"></span><br><span class="line">Symbol table &apos;.dynsym&apos; contains 7 entries:</span><br><span class="line">   Num:    Value          Size Type    Bind   Vis      Ndx Name</span><br><span class="line">     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND</span><br><span class="line">     1: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_deregisterTMCloneTab</span><br><span class="line">     2: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND puts@GLIBC_2.2.5 (2)</span><br><span class="line">     3: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND __libc_start_main@GLIBC_2.2.5 (2)</span><br><span class="line">     4: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND __gmon_start__</span><br><span class="line">     5: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_registerTMCloneTable</span><br><span class="line">     6: 0000000000000000     0 FUNC    WEAK   DEFAULT  UND __cxa_finalize@GLIBC_2.2.5 (2)</span><br></pre></td></tr></table></figure>
+<p>Next, the <code>Type</code>.</p>
+<p>Put <code>000200000007</code> in place of <code>i</code> in the second macro <code>((i) &amp; 0xffffffff)</code>, the result is <code>7</code>.</p>
+<p>Look up this number in the following table, the type is <code>R_X86_64_JUMP_SLOT</code>.</p>
+<p><strong><em>elf.h</em></strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* AMD x86-64 relocations.  */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_NONE		0	<span class="comment">/* No reloc */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_64		1	<span class="comment">/* Direct 64 bit  */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_PC32		2	<span class="comment">/* PC relative 32 bit signed */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOT32		3	<span class="comment">/* 32 bit GOT entry */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_PLT32		4	<span class="comment">/* 32 bit PLT address */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_COPY		5	<span class="comment">/* Copy symbol at runtime */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GLOB_DAT	6	<span class="comment">/* Create GOT entry */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_JUMP_SLOT	7	<span class="comment">/* Create PLT entry */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_RELATIVE	8	<span class="comment">/* Adjust by program base */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOTPCREL	9	<span class="comment">/* 32 bit signed PC relative</span></span></span><br></pre></td></tr></table></figure>
+<p>Hope you enjoyed.</p>
+<p><br></p>
+<blockquote>
+<p><strong><em>What is a symbol?</em></strong>  </p>
+<p>A symbol is a name assigned to an entity in your code.<br>A variable name is a symbol, a function name is a symbol, it is basically a tag to a thing.</p>
+<p><strong><em>What is a Relocation Table?</em></strong>  </p>
+<p>A Relocation Table is a table that tells a linker which location in the code needs to be patched with the symbol’s real memory address. So in the final machine code, when the CPU needs to access the value of a symbol, it just go to that memory address. This is the only thing it cares about.</p>
+<p>Put it in the real world, it is not possible to find Sam Smith’s home by just saying <em>“Sending this letter to Sam’s house”</em>. The address has to be physical.  </p>
+<p>Same story for programming. You got the point.</p>
+</blockquote>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&text=Relocation Table in ELF"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&title=Relocation Table in ELF"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&is_video=false&description=Relocation Table in ELF"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Relocation Table in ELF&body=Check out this article: https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&title=Relocation Table in ELF"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&title=Relocation Table in ELF"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&title=Relocation Table in ELF"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&title=Relocation Table in ELF"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://blog.bbf.ninja/2019/06/12/Relocation-Table-in-ELF/&name=Relocation Table in ELF&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Jiaming
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
